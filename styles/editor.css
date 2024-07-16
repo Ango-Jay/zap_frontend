@@ -1,0 +1,7 @@
+div.ql-container{
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
