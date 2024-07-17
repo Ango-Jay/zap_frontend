@@ -20,7 +20,7 @@ export const Sidebar = ()=>{
 <div className="w-full flex flex-col grow mt-10 pb-[5rem] px-4">
     {
         options.map(item => (
-            <button className="flex justify-center items-center gap-4 w-full py-4 relative group">
+            <button key={item.name} className="flex justify-center items-center gap-4 w-full py-4 relative group">
                 {item.icon}
                <p className="font-medium text-black relative z-[2]">
                {item.name}

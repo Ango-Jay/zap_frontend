@@ -11,6 +11,8 @@
   "dependencies": {
     "@reduxjs/toolkit": "^2.2.6",
     "clsx": "^2.1.1",
+    "dexie": "^4.0.8",
+    "dexie-react-hooks": "^1.1.7",
     "formik": "^2.4.6",
     "framer-motion": "^11.2.13",
     "next": "14.2.4",

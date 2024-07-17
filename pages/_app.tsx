@@ -7,11 +7,23 @@ import { PersistGate } from "redux-persist/integration/react";
 import "@/styles/editor.css";
 
 
-export default function App({ Component, pageProps }: AppProps) {
+export default function App({ Component, pageProps, router }: AppProps) {
+  const pathName = router.pathname.slice(1);
+  const publicPaths = [
+    "login",
+    "signup"
+     ];
+     const privatePaths = {
+     "home": "Home",
+     "create-note": "Create Note",
+     };
+     const isPublicRoute = publicPaths.includes(pathName);
+     const customTitle =
+      isPublicRoute ? publicPaths.find(item => item === pathName ) : privatePaths[pathName.split("dashboard/")[1] as keyof typeof privatePaths];
   return (
     <Provider store={store}>
            <PersistGate persistor={persistor}>
-    <AppLayout>
+    <AppLayout title={`${customTitle}`}>
        
      <Component {...pageProps} />
   

@@ -107,7 +107,7 @@ dispatch(toggleHideSideBar(false))
     )
 }
 <SecondaryButton 
-onClick={()=>router.push(`/dashboard/note/${item.id}`)}
+onClick={()=>router.push(`/dashboard/note/${item.id}?title=bob`)}
 className="mt-4"
 textClassName="font-medium"
 text="View"

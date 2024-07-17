@@ -9,10 +9,12 @@ import { PrimaryButton } from "@/components/Buttons/PrimaryButton";
 import { ShareModal } from "@/components/CreateNote/modals/Share";
 import Editicon from "public/icons/edit.svg"
 import clsx from "clsx";
+import Head from "next/head";
+import { formatHTMLToText } from "@/utils/formatHTMLToText";
 
 
 export default function ViewNote () {
-    const dispatch = useAppDispatch()
+    const dispatch = useAppDispatch();
     useLayoutEffect(
       ()=>{
   dispatch(toggleHideSideBar(true))
@@ -25,8 +27,23 @@ export default function ViewNote () {
     };
     const [showShareModal, setShowShareModal] = useState(false);
     const [showTitleEditor, setShowTitleEditor] = useState(false)
-    const [titleEditorValue, setTitleEditorValue] = useState("<h2>Test note</h2>")
+    const [titleEditorValue, setTitleEditorValue] = useState("<h2>Test note</h2>");
+    useLayoutEffect(
+        ()=>{
+            const formattedTitle = formatHTMLToText(titleEditorValue)
+       if(router.query.title && router.query.title !== formattedTitle && !showTitleEditor ){
+router.push(`${router.query.id}?title=${formattedTitle}`,undefined, {shallow: true})
+}
+
+        }, [titleEditorValue, showTitleEditor]
+    );
+
+    
     return(
+        <>
+                    <Head>
+        <title>{`${router.query.title || ""} | Zap - Ideas on the go`}</title>
+      </Head>
         <div className="flex flex-col items-center grow pt-10">
         <div className="flex flex-col w-full max-w-xl gap-3">
         <button
@@ -51,7 +68,7 @@ onChange={(value)=>setTitleEditorValue(value)}
 />
     ) : (
         <h2 className="text-black font-medium text-xl">
-        Test note
+        {formatHTMLToText(titleEditorValue)}
     </h2>
     )
 }
@@ -99,5 +116,7 @@ text="Save"
 showShareModal &&    <ShareModal closeModal={()=>{setShowShareModal(false)}} />
 }
 </div>
+
+</>
     )
 }
