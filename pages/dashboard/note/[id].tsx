@@ -1,7 +1,5 @@
-import { toggleHideSideBar } from "@/store/appSlice";
-import { useAppDispatch } from "@/store/hooks";
 import { useRouter } from "next/router";
-import { useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import ArrowIcon from "public/icons/arrow.svg"
 import { RichTextEditor } from "@/components/Forms/RichTextEditor";
 import { SecondaryButton } from "@/components/Buttons/SecondaryButton";
@@ -11,23 +9,35 @@ import Editicon from "public/icons/edit.svg"
 import clsx from "clsx";
 import Head from "next/head";
 import { formatHTMLToText } from "@/utils/formatHTMLToText";
+import { useLiveQuery } from "dexie-react-hooks";
+import { db } from "@/services/dexie/db";
 
 
 export default function ViewNote () {
-    const dispatch = useAppDispatch();
-    useLayoutEffect(
-      ()=>{
-  dispatch(toggleHideSideBar(true))
-      }, []
-    );
-    const [editorValue, setEditorValue] = useState("<p><span style=\"color: rgb(206, 145, 120);\">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</span></p>");
     const router = useRouter();
+ const noteId = router.query.id;
+    const [editorValue, setEditorValue] = useState("<p><span style=\"color: rgb(206, 145, 120);\">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</span></p>");
+
     const goToHome = ()=>{
         router.push("/dashboard/home");
     };
     const [showShareModal, setShowShareModal] = useState(false);
     const [showTitleEditor, setShowTitleEditor] = useState(false)
     const [titleEditorValue, setTitleEditorValue] = useState("<h2>Test note</h2>");
+    const note = useLiveQuery(async()=> {
+if(noteId){
+    const data =  await db.notes.toArray();
+    return data.find(item => item.id === Number(noteId))
+}
+    }, [noteId]);
+  useEffect(
+    ()=>{
+if(note?.id){
+    setEditorValue(note.content)
+    setTitleEditorValue(note.title)
+}
+    }, [note?.id]
+  )
     useLayoutEffect(
         ()=>{
             const formattedTitle = formatHTMLToText(titleEditorValue)
@@ -38,7 +48,19 @@ router.push(`${router.query.id}?title=${formattedTitle}`,undefined, {shallow: tr
         }, [titleEditorValue, showTitleEditor]
     );
 
-    
+    const updateNote = async()=>{
+        try {
+          if(note?.id){
+            await db.notes.update(note.id, {
+                content: editorValue,
+                title: titleEditorValue
+            })
+            router.push("/dashboard/home")
+          }
+        } catch (error) {
+            return;
+        }
+    }
     return(
         <>
                     <Head>
@@ -107,6 +129,7 @@ onClick={()=>setShowShareModal(true)}
 text='Share'
 />
 <PrimaryButton
+onClick={updateNote}
 text="Save"
 />
 </div>

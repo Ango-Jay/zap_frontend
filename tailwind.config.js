@@ -14,7 +14,8 @@ module.exports = {
         "secondary-light": "#EDF3FC",
         "primary":"#006AFF",
         "primary-light":"#EEF1F5",
-        stroke: "#E2E6F1"
+        stroke: "#E2E6F1",
+        danger: "#D23B3B"
       }
     },
   },

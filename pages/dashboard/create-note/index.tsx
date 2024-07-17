@@ -63,7 +63,10 @@ onClick={()=>{
         {
             isNextStage && (
                 <SaveModal
-                 closeModal={()=>setIsNextStage(false)} 
+                 closeModal={()=>{
+                  router.push("/dashboard/home")
+
+                 }} 
                  editorValue={editorValue}
                  />
             )

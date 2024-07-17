@@ -6,10 +6,15 @@ import { formatHTMLToText } from "@/utils/formatHTMLToText";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import PlusIcon from "public/icons/plus.svg"
-import { useLayoutEffect } from "react";
+import { useLayoutEffect, useState } from "react";
+import {Note, db} from "@/services/dexie/db"
+import { useLiveQuery } from "dexie-react-hooks";
+import { DeleteItemModal } from "@/components/Home/modals/DeleteItem";
+
 
 
 export default function Home() {
+  const notes = useLiveQuery(()=> db.notes.toArray()) || [];
   const dispatch = useAppDispatch();
   const router = useRouter()
   useLayoutEffect(
@@ -17,41 +22,16 @@ export default function Home() {
 dispatch(toggleHideSideBar(false))
     }, []
   );
-  const notes = [
-    {
-      id: 1,
-      title: "Test Note",
-      content:"<p><span style=\"color: rgb(206, 145, 120);\">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</span></p>",
-      tags:[
-        "test", "work"
-      ]
-    },
-    {
-      id: 2,
-      title: "Test Note",
-      content:"<p><span style=\"color: rgb(206, 145, 120);\">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</span></p>",
-      tags:[
-        "test", "work"
-      ]
-    },
-    {
-      id: 3,
-      title: "Test Note",
-      content:"<p><span style=\"color: rgb(206, 145, 120);\">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</span></p>", 
-      tags:[
-        "test", "work"
-      ]
-    },
-    {
-      id: 4,
-      title: "Test Note",
-      content:"<p><span style=\"color: rgb(206, 145, 120);\">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</span></p>",
-      tags:[
-        "test", "work"
-      ]
-    },
-
-  ];
+  const [active, setActive] = useState<Note>()
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const deleteNote = async(id:number)=>{
+    try {
+    await db.notes.delete(id);
+    setShowDeleteModal(false)
+    } catch (error) {
+      return;
+    }
+  }
   return (
     <div className="w-full py-10">
       <h4 className="text-black text-xl font-semibold">My Notes</h4>
@@ -88,7 +68,7 @@ dispatch(toggleHideSideBar(false))
                 formatHTMLToText(item.content)
             }
         </p>
-{
+{/* {
     item.tags.length && (
         <div
         className="w-full grid grid-cols-3 gap-3 mt-4"
@@ -105,13 +85,30 @@ dispatch(toggleHideSideBar(false))
             }
         </div>
     )
-}
+} */}
+<div className="w-full mt-4 flex gap-3">
 <SecondaryButton 
 onClick={()=>router.push(`/dashboard/note/${item.id}?title=bob`)}
-className="mt-4"
 textClassName="font-medium"
 text="View"
 />
+<button 
+onClick={()=>{
+  setActive(item)
+  setShowDeleteModal(true)
+}}
+className="flex gap-2 items-center justify-center gap-3 w-full py-3 bg-danger/10 rounded-xl lg:hover:opacity-80">
+<Image
+src={"/icons/trash_can2.svg"}
+width={16}
+height={16} 
+alt=""
+/>
+  <p className="text-danger">
+    Delete
+  </p>
+</button>
+</div>
         </div>
     ))
    }
@@ -130,6 +127,7 @@ text="View"
         You have no saved notes at the moment
     </p>
 <PrimaryButton 
+          onClick={()=>router.push("/dashboard/create-note")}
 className="!gap-2 max-w-[220px]"
 icon={<PlusIcon className="w-4 h-4 fill-white" />}
 text="Create note"
@@ -137,6 +135,20 @@ text="Create note"
 </div>
         )
       }
+
+
+    {
+      showDeleteModal && active && (
+        <DeleteItemModal 
+        note={active}
+        deleteItem={()=>{
+        deleteNote(active.id)
+        setShowDeleteModal(false)
+        }}
+        closeModal={()=>setShowDeleteModal(false)}
+        />
+      )
+    }
     </div>
   );
 }

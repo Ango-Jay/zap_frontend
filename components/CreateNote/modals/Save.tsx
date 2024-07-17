@@ -3,6 +3,7 @@ import { TextInput } from "@/components/Forms/TextInput"
 import { ModalTransition } from "@/components/animation_utils/ModalTransition"
 import { Form, Formik } from "formik"
 import XmarkIcon from "public/icons/x_mark.svg"
+import { db } from "@/services/dexie/db"
 interface Props {
     closeModal: ()=>void;
     editorValue: string
@@ -24,15 +25,21 @@ editorValue
   <XmarkIcon className="fill-black/80 w-4 h-4" />
 </button>
 <h4 className="text-xl text-dark font-medium">Save Note</h4>
-<p className="text-sm text-gray">Choose share option below.</p>
 <div className="w-full flex flex-col gap-6 pt-6">
 <Formik
 initialValues={{
     title: ""
 }}
-onSubmit={(values)=>{
-// submit
-closeModal()
+onSubmit={async(values)=>{
+try {
+    await db.notes.add({
+        title: values.title,
+        content: editorValue
+    });
+    closeModal()
+} catch (error) {
+    return;
+}
 }}
 >
     <Form className="flex flex-col gap-6">
