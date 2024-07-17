@@ -36,15 +36,15 @@ title
                 inter.className
             )
         }>
-            
+            <Header />
             {
-                hideSideBar ? 
-                (<Header />) : 
-                 (<Sidebar />)
+                // hideSideBar ? 
+                // (<Header />) : 
+                //  (<Sidebar />)
             }
 <div className={
     clsx(
-        "flex flex-col w-full grow  pl-[18.75rem] bg-[#EFEFEF]/20",
+        "flex flex-col w-full grow  bg-[#EFEFEF]/20",
         hideSideBar && "!pl-0"
     )
 }>

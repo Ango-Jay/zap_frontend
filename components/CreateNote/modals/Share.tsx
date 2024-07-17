@@ -57,7 +57,7 @@ closeModal
   {item.title}
 </p>
 </div>
-<CaretIcon className="fill-black" />
+<CaretIcon className="fill-black w-6 h-6" />
       </button>
   ))
 }
