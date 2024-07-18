@@ -10,18 +10,22 @@ import { useLayoutEffect, useState } from "react";
 import {Note, db} from "@/services/dexie/db"
 import { useLiveQuery } from "dexie-react-hooks";
 import { DeleteItemModal } from "@/components/Home/modals/DeleteItem";
+import { useIsOnline } from "@/hooks/useIsOnline";
 
 
 
 export default function Home() {
   const notes = useLiveQuery(()=> db.notes.toArray()) || [];
   const dispatch = useAppDispatch();
-  const router = useRouter()
+  const router = useRouter();
   useLayoutEffect(
     ()=>{
 dispatch(toggleHideSideBar(false))
     }, []
   );
+  const isOnline = useIsOnline();
+  console.log(isOnline);
+  
   const [active, setActive] = useState<Note>()
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const deleteNote = async(id:number)=>{
