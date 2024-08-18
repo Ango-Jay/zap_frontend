@@ -8,6 +8,8 @@ import { ShareModal } from '@/components/CreateNote/modals/Share';
 import { useAppDispatch } from '@/store/hooks';
 import { toggleHideSideBar } from '@/store/appSlice';
 import { SaveModal } from '@/components/CreateNote/modals/Save';
+import {AudioRecorder} from '@/components/CreateNote/AudioRecorder';
+import clsx from 'clsx';
 
 
 export default function CreateNote () {
@@ -19,6 +21,7 @@ export default function CreateNote () {
     );
     const [editorValue, setEditorValue] = useState('');
     const router = useRouter();
+    const noteType = typeof router.query.type === "string" ? router.query.type : "text";
     const goToHome = ()=>{
         router.push("/dashboard/home");
     };
@@ -35,13 +38,26 @@ export default function CreateNote () {
             Back
            </button>
   
-        <div className="flex flex-col w-full p-4 min-h-[35rem] shadow-sm border border-[#085BA7]/10 rounded-lg">
-   
+        <div className={
+            clsx(
+                "flex flex-col w-full p-4 min-h-[35rem] shadow-sm border border-[#085BA7]/10 rounded-lg",
+                noteType === "audio" && "pb-8"
+            )
+        }>
+   {
+    noteType !== "audio" ? (
  <RichTextEditor 
  type="advanced"
  value={editorValue}
  onChange={(value)=>setEditorValue(value)}
- />
+ /> 
+    ) : (
+<AudioRecorder
+setValue={(value)=>setEditorValue(value)}
+/>
+    )
+   }
+
 
 <div className="w-full flex items-center gap-4 mt-4">
     <SecondaryButton
@@ -58,14 +74,15 @@ onClick={()=>{
         </div>
         </div>
         {
-        showShareModal &&    <ShareModal closeModal={()=>{setShowShareModal(false)}} />
+        showShareModal &&    <ShareModal isAudio={noteType === "audio"} closeModal={()=>{setShowShareModal(false)}} />
         }
         {
             isNextStage && (
                 <SaveModal
-                 closeModal={()=>{
-                  router.push("/dashboard/home")
-
+                type={noteType}
+                 closeModal={(isSave)=>{
+                  if(isSave) return router.push("/dashboard/home");
+                  setIsNextStage(false)
                  }} 
                  editorValue={editorValue}
                  />

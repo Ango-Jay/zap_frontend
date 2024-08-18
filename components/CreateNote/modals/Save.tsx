@@ -5,13 +5,15 @@ import { Form, Formik } from "formik"
 import XmarkIcon from "public/icons/x_mark.svg"
 import { db } from "@/services/dexie/db"
 interface Props {
-    closeModal: ()=>void;
+    closeModal: (isSave?:boolean)=>void;
+    type: string;
     editorValue: string
 }
 export const SaveModal = (
     {
 closeModal,
-editorValue
+editorValue,
+type
     }:Props
 )=>{
     return(
@@ -19,7 +21,7 @@ editorValue
         <div className="flex flex-col bg-white sm:border sm:border-secondary w-full sm:max-w-lg h-[80%] sm:h-fit py-6 mt-auto sm:mt-0 rounded-t-2xl sm:rounded-2xl shadow-sm relative z-[210]">
 <div className="w-full px-6">
 <button
-  onClick={closeModal}
+  onClick={()=>closeModal()}
   className="w-8 h-8 rounded-xl flex items-center justify-center ml-auto bg-secondary/20 border-half border-secondary lg:hover:bg-secondary/40"
 >
   <XmarkIcon className="fill-black/80 w-4 h-4" />
@@ -34,31 +36,39 @@ onSubmit={async(values)=>{
 try {
     await db.notes.add({
         title: values.title,
+        type,
         content: editorValue
     });
-    closeModal()
+    closeModal(true)
 } catch (error) {
     return;
 }
 }}
 >
-    <Form className="flex flex-col gap-6">
-    <div className="w-full">
-    <TextInput 
-        name="title"
-        labelText="Title"
-        placeholder="Enter note title"
-        isError={false}
-        maxLength={50}
-        required
-
-        />
-    </div>
-        <PrimaryButton
-        className="w-full"
-        text="Save"
-        />
-    </Form>
+{
+    ({dirty})=>{
+        return(
+            <Form className="flex flex-col gap-6">
+            <div className="w-full">
+            <TextInput 
+                name="title"
+                labelText="Title"
+                placeholder="Enter note title"
+                isError={false}
+                maxLength={50}
+                required
+        
+                />
+            </div>
+                <PrimaryButton
+                disabled={!dirty}
+                className="w-full"
+                text="Save"
+                />
+            </Form>
+        )
+    }
+}
 </Formik>
   </div>
   </div>

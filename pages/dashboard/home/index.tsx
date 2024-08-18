@@ -11,8 +11,9 @@ import {Note, db} from "@/services/dexie/db"
 import { useLiveQuery } from "dexie-react-hooks";
 import { DeleteItemModal } from "@/components/Home/modals/DeleteItem";
 import { useIsOnline } from "@/hooks/useIsOnline";
-
-
+import NoteIcon from "public/icons/note.svg"
+import AudioIcon from "public/icons/microphone.svg"
+import PlayIcon from "public/icons/play.svg"
 
 export default function Home() {
   const notes = useLiveQuery(()=> db.notes.toArray()) || [];
@@ -24,8 +25,7 @@ dispatch(toggleHideSideBar(false))
     }, []
   );
   const isOnline = useIsOnline();
-  console.log(isOnline);
-  
+  const [showOptions, setShowOptions] = useState(false)
   const [active, setActive] = useState<Note>()
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const deleteNote = async(id:number)=>{
@@ -43,12 +43,37 @@ dispatch(toggleHideSideBar(false))
       {
         Boolean(notes.length)  ? (
           <>
-          <PrimaryButton 
-          onClick={()=>router.push("/dashboard/create-note")}
+  <div className="w-[220px] relative">
+  <PrimaryButton 
+          onClick={()=>setShowOptions(true)}
           className="!gap-2 max-w-[220px] mt-10 mb-6"
           icon={<PlusIcon className="w-4 h-4 fill-white" />}
           text="Add note"
           />
+          {
+            showOptions && (
+              <div
+            className="absolute top-[3rem] z-[50] mt-2 right-0 w-[12.5rem]  bg-white shadow-sm border border-[#085BA7]/10 rounded-xl p-4"
+            >
+              <p className="text-gray text-sm mb-1">
+                Select note type
+              </p>
+              <button
+              onClick={()=>router.push("/dashboard/create-note?type=text")}
+              className="flex gap-2 items-center w-full mb-1 py-2 lg:hover:bg-primary-light rounded">
+                <NoteIcon className="w-4 h-4 fill-primary" />
+                Text
+              </button>
+              <button
+              onClick={()=>router.push("/dashboard/create-note?type=audio")}
+              className="flex gap-2 items-center w-full py-2 lg:hover:bg-primary-light rounded">
+              <AudioIcon className="w-5 h-5 fill-secondary" />
+                Audio
+              </button>
+            </div>
+            )
+          }
+  </div>
 <div className="w-full grid grid-cols-3 xl:grid-cols-4 gap-6">
    {
     notes.map(item =>(
@@ -56,22 +81,30 @@ dispatch(toggleHideSideBar(false))
         key={item.id}
         className="w-full  p-4 shadow-sm border border-[#085BA7]/10 rounded">
         <div className="w-full h-[150px] overflow-hidden">
-        <Image 
-          src={"/images/note.svg"}
-          width={400}
-          height={300}
-          className="w-full h-[300px] object-cover -mt-[70px]"
-          alt=""
-          />
+   {
+    item.type === "audio" ? (
+<PlayIcon  className="w-[120px] h-[120px] m-auto" />
+    ) : (
+      <Image 
+      src={ "/images/note.svg"}
+      width={400}
+      height={300}
+      className="w-full h-[300px] object-cover -mt-[70px]"
+      alt=""
+      />
+    )
+   }
         </div>
         <p className="text-black font-medium my-4">
             {item.title}
         </p>
-        <p className="text-gray text-sm truncate ...">
-            {
-                formatHTMLToText(item.content)
-            }
-        </p>
+   {
+    item.type !== "audio" &&      <p className="text-gray text-sm truncate ...">
+    {
+        formatHTMLToText(item.content)
+    }
+</p>
+   }
 {/* {
     item.tags.length && (
         <div
@@ -130,12 +163,37 @@ alt=""
     <p className="text-black font-medium">
         You have no saved notes at the moment
     </p>
+    <div className="w-[220px] relative">
 <PrimaryButton 
-          onClick={()=>router.push("/dashboard/create-note")}
+          onClick={()=>setShowOptions(true)}
 className="!gap-2 max-w-[220px]"
 icon={<PlusIcon className="w-4 h-4 fill-white" />}
 text="Create note"
 />
+{
+            showOptions && (
+              <div
+            className="absolute top-[3rem] z-[50] mt-2 right-0 w-[12.5rem]  bg-white shadow-sm border border-[#085BA7]/10 rounded-xl p-4"
+            >
+              <p className="text-gray text-sm mb-1">
+                Select note type
+              </p>
+              <button
+              onClick={()=>router.push("/dashboard/create-note?type=text")}
+              className="flex gap-2 items-center w-full mb-1 py-2 lg:hover:bg-primary-light rounded">
+                <NoteIcon className="w-4 h-4 fill-primary" />
+                Text
+              </button>
+              <button
+              onClick={()=>router.push("/dashboard/create-note?type=audio")}
+              className="flex gap-2 items-center w-full py-2 lg:hover:bg-primary-light rounded">
+              <AudioIcon className="w-5 h-5 fill-secondary" />
+                Audio
+              </button>
+            </div>
+            )
+          }
+</div>
 </div>
         )
       }
@@ -151,6 +209,13 @@ text="Create note"
         }}
         closeModal={()=>setShowDeleteModal(false)}
         />
+      )
+    }
+    {
+      showOptions && (
+        <div 
+        onClick={()=>setShowOptions(false)}
+        className="w-full min-h-screen fixed inset-0 z-[30]" />
       )
     }
     </div>

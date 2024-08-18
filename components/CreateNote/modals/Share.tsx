@@ -6,14 +6,25 @@ import UrlIcon from "public/icons/url.svg"
 
 
 interface Props {
-closeModal: ()=>void
+closeModal: ()=>void;
+isAudio: boolean
 }
 export const ShareModal = (
     {
-closeModal
+closeModal,
+isAudio
     }:Props
 )=>{
-  const options = [
+  const options = isAudio ? [
+    {
+      title:"Copy URL",
+      icon: <UrlIcon className="w-full h-full fill-black p-2" />,
+      action: ()=>{
+       
+      }
+     }
+  ] 
+  : [
     {
      title:"Copy as Text",
      icon: <CopyIcon  className="w-full h-full fill-black" />,

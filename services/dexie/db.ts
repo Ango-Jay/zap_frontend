@@ -3,6 +3,7 @@ import Dexie, { type EntityTable } from 'dexie';
 interface Note {
   id: number;
   title: string;
+  type: string;
   content: string;
 }
 
@@ -15,7 +16,7 @@ const db = new Dexie('ZAP_STORE') as Dexie & {
 
 // Schema declaration:
 db.version(1).stores({
-  notes: '++id, title, content' // primary key "id" (for the runtime!)
+  notes: '++id, title, type, content' // primary key "id" (for the runtime!)
 });
 
 export type { Note };

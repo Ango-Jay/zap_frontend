@@ -30,6 +30,7 @@ if(noteId){
     return data.find(item => item.id === Number(noteId))
 }
     }, [noteId]);
+    const isAudioNote = note?.type === "audio";
   useEffect(
     ()=>{
 if(note?.id){
@@ -115,28 +116,50 @@ onChange={(value)=>setTitleEditorValue(value)}
 </div>
 
 
-<div className="flex flex-col w-full p-4 min-h-[35rem] shadow-sm border border-[#085BA7]/10 rounded-lg">
+<div className={
+    clsx(
+        "flex flex-col w-full p-4 min-h-[35rem] shadow-sm border border-[#085BA7]/10 rounded-lg",
+        isAudioNote && "!pb-8"
+    )
+}>
 
-<RichTextEditor 
+{
+
+    isAudioNote ? (
+      <div className="w-full flex justify-center my-auto">
+
+<audio src={note.content} controls></audio>
+      </div>
+    ) : (
+        <RichTextEditor 
 type="advanced"
 value={editorValue}
 onChange={(value)=>setEditorValue(value)}
 />
 
+    )
+}
 <div className="w-full flex items-center gap-4 mt-4">
 <SecondaryButton
 onClick={()=>setShowShareModal(true)}
 text='Share'
 />
 <PrimaryButton
-onClick={updateNote}
-text="Save"
+onClick={()=>{
+    if(isAudioNote) {
+        goToHome()
+    }
+    else{
+        updateNote()
+    }
+}}
+text={isAudioNote ? "Close" : "Save"}
 />
 </div>
 </div>
 </div>
 {
-showShareModal &&    <ShareModal closeModal={()=>{setShowShareModal(false)}} />
+showShareModal &&    <ShareModal isAudio={isAudioNote} closeModal={()=>{setShowShareModal(false)}} />
 }
 </div>
 
