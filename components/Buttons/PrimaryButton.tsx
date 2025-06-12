@@ -21,7 +21,7 @@ textClassName,
         <button
         className={
             clsx(
-                "flex items-center justify-center gap-3 w-full py-3 bg-primary rounded-xl lg:hover:opacity-80 disabled:bg-primary-light",
+                "flex items-center justify-center gap-3 w-full py-3 bg-primary rounded-xl lg:hover:opacity-80 disabled:bg-primary-light disabled:cursor-not-allowed",
                 className
             )
         }
