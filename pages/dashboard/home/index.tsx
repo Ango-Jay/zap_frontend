@@ -38,42 +38,48 @@ dispatch(toggleHideSideBar(false))
   }
   return (
     <div className="w-full py-10">
-      <h4 className="text-black text-xl font-semibold">My Notes</h4>
+<div className="w-full flex items-center justify-between mb-10">
+<h4 className="text-black text-2xl font-semibold">My Notes</h4>
+{
+  !!notes.length && (
+    <div className="w-[220px] relative">
+    <PrimaryButton 
+            onClick={()=>setShowOptions(true)}
+            className="!gap-2 max-w-[220px]"
+            icon={<PlusIcon className="w-4 h-4 fill-white" />}
+            text="Add note"
+            />
+            {
+              showOptions && (
+                <div
+              className="absolute top-[3rem] z-[50] mt-2 right-0 w-[12.5rem]  bg-white shadow-sm border border-[#085BA7]/10 rounded-xl p-4"
+              >
+                <p className="text-gray text-sm mb-1">
+                  Select note type
+                </p>
+                <button
+                onClick={()=>router.push("/dashboard/create-note?type=text")}
+                className="flex gap-2 items-center w-full mb-1 py-2 lg:hover:bg-primary-light rounded">
+                  <NoteIcon className="w-4 h-4 fill-primary" />
+                  Text
+                </button>
+                <button
+                onClick={()=>router.push("/dashboard/create-note?type=audio")}
+                className="flex gap-2 items-center w-full py-2 lg:hover:bg-primary-light rounded">
+                <AudioIcon className="w-5 h-5 fill-secondary" />
+                  Audio
+                </button>
+              </div>
+              )
+            }
+    </div>
+  )
+}
+</div>
 
       {
         Boolean(notes.length)  ? (
           <>
-  <div className="w-[220px] relative">
-  <PrimaryButton 
-          onClick={()=>setShowOptions(true)}
-          className="!gap-2 max-w-[220px] mt-10 mb-6"
-          icon={<PlusIcon className="w-4 h-4 fill-white" />}
-          text="Add note"
-          />
-          {
-            showOptions && (
-              <div
-            className="absolute top-[3rem] z-[50] mt-2 right-0 w-[12.5rem]  bg-white shadow-sm border border-[#085BA7]/10 rounded-xl p-4"
-            >
-              <p className="text-gray text-sm mb-1">
-                Select note type
-              </p>
-              <button
-              onClick={()=>router.push("/dashboard/create-note?type=text")}
-              className="flex gap-2 items-center w-full mb-1 py-2 lg:hover:bg-primary-light rounded">
-                <NoteIcon className="w-4 h-4 fill-primary" />
-                Text
-              </button>
-              <button
-              onClick={()=>router.push("/dashboard/create-note?type=audio")}
-              className="flex gap-2 items-center w-full py-2 lg:hover:bg-primary-light rounded">
-              <AudioIcon className="w-5 h-5 fill-secondary" />
-                Audio
-              </button>
-            </div>
-            )
-          }
-  </div>
 <div className="w-full grid grid-cols-3 xl:grid-cols-4 gap-6">
    {
     notes.map(item =>(

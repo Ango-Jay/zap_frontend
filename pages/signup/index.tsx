@@ -5,10 +5,12 @@ import { toggleHideSideBar } from "@/store/appSlice"
 import { useAppDispatch } from "@/store/hooks"
 import { Formik, Form } from "formik"
 import Image from "next/image"
+import { useRouter } from "next/router"
 import { useLayoutEffect } from "react"
 
 export default function Signup () {
-    const dispatch = useAppDispatch()
+    const dispatch = useAppDispatch();
+    const router = useRouter();
     useLayoutEffect(
         ()=>{
           dispatch(toggleHideSideBar(true))
@@ -91,6 +93,12 @@ isError={false}
             className="w-full"
             text="Sign up"
             />
+                        <button
+                    onClick={()=>router.push("/login")}
+                    type="button"
+                    className="text-sm text-gray text-center py-3">
+                    Already have an account? <span className="text-primary">Log in</span>
+                    </button>
         </Form>
     </Formik>
 </div>

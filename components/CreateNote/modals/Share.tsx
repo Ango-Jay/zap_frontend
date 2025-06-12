@@ -52,23 +52,23 @@ isAudio
           </button>
           <h4 className="text-xl text-dark font-medium">Share Note</h4>
           <p className="text-sm text-gray">Choose share option below.</p>
-          <div className="w-full flex flex-col gap-6 pt-6">
+          <div className="w-full flex flex-col gap-4 pt-6">
 {
   options.map(item => (
     <button
     key={item.title}
     onClick={item.action}
-    className="w-full flex gap-2 lg:hover:scale-[0.99]"
+    className="w-full flex gap-2 py-1 border-b border-b-gray/20 lg:hover:bg-primary/10"
     >
 <div className="w-10 h-10 bg-secondary/20 rounded-full">
 {item.icon}
 </div>
-<div className="grow pb-4 border-b border-b-gray/20">
-<p className="font-medium text-black">
+<div className="grow flex items-center justify-center relative">
+<p className="font-medium text-blac mx-auto">
   {item.title}
 </p>
-</div>
 <CaretIcon className="fill-black w-6 h-6" />
+</div>
       </button>
   ))
 }
