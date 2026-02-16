@@ -1,9 +1,11 @@
+import { LOGIN_USER } from "@/api/auth";
 import { PrimaryButton } from "@/components/Buttons/PrimaryButton";
 import { PasswordInput } from "@/components/Forms/PasswordInput";
 import { TextInput } from "@/components/Forms/TextInput";
 import { toggleIsAuthenticated, toggleHideSideBar } from "@/store/appSlice";
 import { useAppDispatch } from "@/store/hooks";
 import { emailRegex } from "@/utils/constants";
+import { useMutation } from "@tanstack/react-query";
 import { Formik, Form } from "formik";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -17,6 +19,9 @@ export default function Login() {
     dispatch(toggleHideSideBar(true));
     dispatch(toggleIsAuthenticated(false));
   }, []);
+  const {mutateAsync, isPending} = useMutation({
+    mutationFn: LOGIN_USER
+  });
   return (
     <div className="w-full min-h-screen flex justify-center pt-10">
       <div className="flex flex-col grow-0 w-full max-w-lg h-fit shadow-sm border border-[#085BA7]/10 rounded-xl p-6 sm:p-10">
@@ -46,8 +51,10 @@ export default function Login() {
               password: "",
             }}
             validationSchema={validationSchema}
-            onSubmit={(values) => {
+            onSubmit={async (values) => {
               try {
+               const res = await mutateAsync(values);
+               
                 dispatch(toggleIsAuthenticated(true));
                 router.push("/dashboard/home");
               } catch {}

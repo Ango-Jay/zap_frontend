@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { ImagePlaceholder } from "../ImagePlaceholder"
+import { ImagePlaceholder } from "../utils/ImagePlaceholder"
 import CaretIcon from "public/icons/caret.svg"
 import LogoutIcon from "public/icons/logout.svg";
 import clsx from "clsx";
